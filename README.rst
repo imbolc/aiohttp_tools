@@ -1,12 +1,10 @@
 aiohttp_tools
 =============
 
-A set of little tools for aiohttp-based sites.
-
 It contains:
 
 - ``url_for`` - flask-like url reverser
-- ``jsonify`` - flask-like json-dumper with support of datetime, and ObjectId
+- ``jsonify`` - flask-like json-dumper with support of ``datetime``, and ``ObjectId``
 - ``redirect`` - django-like redirect
 - ``get_argument`` - tornado-like util to get GET / POST arguments
 - ``static_url`` - tornado-like url-wrapper to add version hast to static asset
