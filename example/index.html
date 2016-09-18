@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8">
+  <title>aiohttp_tools</title>
+  <link rel="stylesheet" href="{{ static_url('flash.css') }}" type="text/css">
+
+  <h1>aiohttp_tools</h1>
+
+  {% for message, level in get_flashed_messages() %}
+    <div class="flash {{ level }}">
+      {{ message }}
+    </div>
+  {% endfor %}
+
+  <p>
+    API:
+    <a href="{{ url_for('api', method='now') }}">current time</a>, 
+    <a href="{{ url_for('api', method='ip') }}">current ip</a> 
+  </p>
+
+  <form method="post" action="">
+      <input type="text" name="message" value="flash message">
+      <button type="submit" class="btn">Create</button>
+  </form>
+
+  <ul>
+    <li>
+      <a href="http://127.0.0.1:8000">try to change host</a>
+      - you should be sent back to 0.0.0.0
+    </li>
+    <li>
+      <a href="/not-found">try to request unknown url without trailing slash</a>
+      - you should be redirected into /not-found/
+    </li>
+  </p>
+
+
+</html>

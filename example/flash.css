@@ -1,0 +1,8 @@
+.flash {
+    padding: 15px;
+    margin: 20px;
+}
+.flash.info {
+    border: 1px solid blue;
+    color: blue;
+}
