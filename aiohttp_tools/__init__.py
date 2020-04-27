@@ -1,24 +1,24 @@
-from aiohttp import web
 import asjson
-
+from aiohttp import web
 
 DEFAULT = object()
 
 
-def url_for(request, urlname, *, _external=False, _scheme=None, _query=None,
-            **parts):
-    reverse = request.app.router[urlname].url
-    if parts:
-        url = reverse(parts=parts, query=_query)
-    else:
-        url = reverse(query=_query)
+def url_for(
+    request, urlname, *, _external=False, _scheme=None, _query=None, **parts
+):
+    url = request.app.router[urlname].url_for(
+        **{k: str(v) for k, v in parts.items()}
+    )
+    if _query:
+        url = url.with_query(_query)
     if _external:
-        url = '{}://{}{}'.format(_scheme or request.scheme, request.host, url)
-    return url
+        url = "{}://{}{}".format(_scheme or request.scheme, request.host, url)
+    return str(url)
 
 
 def redirect(request, urlname, *, permanent=False, **kwargs):
-    if urlname.startswith(('/', 'http://', 'https://')):
+    if urlname.startswith(("/", "http://", "https://")):
         url = urlname
     else:
         url = url_for(request, urlname, **kwargs)
@@ -28,10 +28,10 @@ def redirect(request, urlname, *, permanent=False, **kwargs):
 
 def get_client_ip(request):
     try:
-        ips = request.headers['X-Forwarded-For']
+        ips = request.headers["X-Forwarded-For"]
     except KeyError:
-        ips = request.transport.get_extra_info('peername')[0]
-    return ips.split(',')[0]
+        ips = request.transport.get_extra_info("peername")[0]
+    return ips.split(",")[0]
 
 
 def get_argument(container, name, default=DEFAULT, *, cls=None):
@@ -40,13 +40,15 @@ def get_argument(container, name, default=DEFAULT, *, cls=None):
         if default is not DEFAULT:
             return default
         raise web.HTTPBadRequest(
-            reason='Missing required argument: {}'.format(name))
+            reason="Missing required argument: {}".format(name)
+        )
     if cls:
         try:
             arg = cls(arg)
         except Exception:
             raise web.HTTPBadRequest(
-                reason='Argument is incorrect: {}'.format(name))
+                reason="Argument is incorrect: {}".format(name)
+            )
     return arg
 
 
@@ -57,7 +59,7 @@ def jsonify(handler_or_data, *args, **kwargs):
 
 def jsonify_function(data, debug=False, **kwargs):
     text = asjson.dumps(data, debug=debug)
-    kwargs['content_type'] = kwargs.get('content_type', 'application/json')
+    kwargs["content_type"] = kwargs.get("content_type", "application/json")
     return web.Response(text=text, **kwargs)
 
 
@@ -67,4 +69,5 @@ def jsonify_decortor(handler, *args, **kwargs):
         if isinstance(response, web.StreamResponse):
             return response
         return jsonify_function(response, *args, **kwargs)
+
     return wrapper
