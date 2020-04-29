@@ -10,7 +10,6 @@ It contains:
 - ``static_url`` - tornado-like url-wrapper to add version hast to static asset
 - ``flash`` - simple flash messages, usage described bellow
 - ``get_client_ip`` - client IP address
-- ``add_trailing_slash`` - middleware for adding trailing slash to unknown url
 - ``fix_host`` - middleware for redirect requests by IP to right domain
 - ``template_handler`` - handler that just render template
 - ``url_for_processor`` - context processor for using ``url_for`` without passing request

@@ -17,6 +17,9 @@ Usage:
     {% endfor %}
 """
 from functools import partial
+
+from aiohttp import web
+
 from aiohttp_session import get_session
 
 
@@ -35,14 +38,12 @@ async def context_processor(request):
     return {"get_flashed_messages": lambda: request.pop("flash_incoming", [])}
 
 
-async def middleware(app, handler):
-    async def process(request):
-        session = await get_session(request)
-        request["flash_incoming"] = session.pop("flash", [])
-        response = await handler(request)
-        session["flash"] = request.get("flash_incoming", []) + request.get(
-            "flash_outgoing", []
-        )
-        return response
-
-    return process
+@web.middleware
+async def middleware(request, handler):
+    session = await get_session(request)
+    request["flash_incoming"] = session.pop("flash", [])
+    response = await handler(request)
+    session["flash"] = request.get("flash_incoming", []) + request.get(
+        "flash_outgoing", []
+    )
+    return response
