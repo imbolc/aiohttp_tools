@@ -20,7 +20,7 @@ def fix_host(true_host: str):
                 requested_url,
                 redirect_url,
             )
-            return web.HTTPPermanentRedirect(redirect_url)
+            raise web.HTTPPermanentRedirect(redirect_url)
         return await handler(request)
 
     return fix_host_middleware
