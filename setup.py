@@ -20,7 +20,7 @@ if sys.argv[-1] == "publish":
 
 setup(
     name="aiohttp_tools",
-    version="0.2.1",
+    version="0.2.2",
     description="A set of little tools for aiohttp-based sites",
     long_description=read("README.rst"),
     classifiers=[

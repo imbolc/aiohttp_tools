@@ -19,7 +19,6 @@ Usage:
 from functools import partial
 
 from aiohttp import web
-
 from aiohttp_session import get_session
 
 
@@ -38,11 +37,22 @@ async def context_processor(request):
     return {"get_flashed_messages": lambda: request.pop("flash_incoming", [])}
 
 
+def _update_session_messages(request, session):
+    session["flash"] = request.get("flash_incoming", []) + request.get(
+        "flash_outgoing", []
+    )
+
+
 @web.middleware
 async def middleware(request, handler):
     session = await get_session(request)
     request["flash_incoming"] = session.pop("flash", [])
-    response = await handler(request)
+    try:
+        response = await handler(request)
+    except web.HTTPFound:
+        _update_session_messages(request, session)
+        raise
+    _update_session_messages(request, session)
     session["flash"] = request.get("flash_incoming", []) + request.get(
         "flash_outgoing", []
     )
